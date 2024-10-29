@@ -64,7 +64,7 @@ Para o desenvolvimento do Finansia, foram utilizadas as seguintes tecnologias:
 1. Clone o repositório:
 
     ```bash
-    git clone https:[//github.com/seuusuario/finansia.git](https://github.com/Maanux/Finansia.git)
+    git clone https:[https://github.com/Maanux/Finansia.git](https://github.com/Maanux/Finansia.git)
     ```
 
 2. Instale as dependências do projeto:
