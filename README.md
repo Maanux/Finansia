@@ -72,5 +72,7 @@ Para o desenvolvimento do Finansia, foram utilizadas as seguintes tecnologias:
     ```bash
     cd finansia
     yarn
+    yarn add typescript@5.3.3 --dev
+
     ```
 
