@@ -1,50 +1,87 @@
-# Welcome to your Expo app 👋
+# Finansia
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+O **Finansia** é um aplicativo de finanças pessoais desenvolvido para facilitar o controle financeiro individual. Ele permite que usuários acompanhem saldos, despesas mensais e gastos de crédito em um único local. O projeto foi desenvolvido como parte das atividades da disciplina de Desenvolvimento de Projetos para Dispositivos Móveis.
 
-## Get started
+## Sobre o App
 
-1. Install dependencies
+O Finansia visa ajudar os usuários a gerenciar suas finanças de forma prática, oferecendo uma interface amigável para registrar e visualizar suas movimentações financeiras. Entre as funcionalidades planejadas, destacam-se:
+
+### Funcionalidades Básicas
+
+- [x] Cadastro e login de usuários com autenticação segura
+- [x] Exibição de saldo atual
+- [x] Registro de despesas mensais (ex.: contas fixas como água e luz)
+- [x] Registro de gastos de crédito (ex.: compras esporádicas como delivery)
+- [x] Visualização e edição de transações
+
+### Funcionalidades Adicionais (futuras)
+
+- [ ] Análises de gasto por categoria
+- [ ] Alertas de limite de gasto
+- [ ] Relatórios e gráficos de tendência de despesas
+
+## Protótipos de Tela
+
+Os protótipos das telas foram desenvolvidos no Figma, com fluxos de navegação e interações configuradas para melhor demonstração do funcionamento do app. [Clique aqui para visualizar os protótipos no Figma](https://www.figma.com/design/aUYQ6gTfruG362dDpeWoAp/FINANSIA?node-id=0-1&node-type=canvas&t=pwDuc94UxbT0paih-0).
+
+## Modelagem do Banco
+
+A modelagem do banco de dados foi realizada para organizar os dados de usuários, saldo e gastos. Abaixo está um diagrama entidade-relacionamento, que ilustra as tabelas e relações:
+
+[Diagrama do Banco de Dados](https://app.diagrams.net/#HMaanux%2FFinansia%2Fmain%2FFInansia#%7B%22pageId%22%3A%223djKlx9JutFwW-Czxqdm%22%7D)
+
+### Estrutura das Tabelas
+
+1. **Tabela `Usuario`**: Armazena informações do usuário (id, primeiroNome, ultimoNome, apelido, senha).
+2. **Tabela `Gastos_Mensais`**: Contém registros de despesas mensais fixas (id, usuario_id, nome, valor, data_hora_ganho).
+3. **Tabela `Gastos_Credito`**: Contém registros de gastos de crédito esporádicos (id, usuario_id, nome, valor, data_hora_ganho).
+4. **Tabela `Ganhos_Mensais`**: Contém registros de ganhos (id, usuario_id, nome, valor, data_hora_ganho).
+
+## Planejamento de Sprints
+
+### Sprint 1 (até Checkpoint 2)
+
+**Objetivo**: Implementar roteamento e esqueleto de telas
+
+- [x] Criar estrutura inicial das telas e rotas de navegação
+- [x] Configurar telas estilizadas e navegação entre elas com dados simulados
+
+### Sprint 2 (até Checkpoint 3)
+
+**Objetivo**: Integração de funcionalidades e banco de dados
+
+- [x] Implementar banco de dados local e integração para funcionalidades básicas
+- [x] Habilitar login, cadastro, e gerenciamento de saldo e gastos
+
+### Sprint 3 (até Checkpoint 4)
+
+**Objetivo**: Finalização do app e entrega do APK
+
+- [x] Testar e ajustar funcionalidades básicas
+- [ ] Implementar e testar funcionalidades adicionais selecionadas
+
+## Ambiente de Desenvolvimento e Ferramentas
+
+Para o desenvolvimento do Finansia, foram utilizadas as seguintes tecnologias:
+
+- **Front-End**: [React Native](https://reactnative.dev/)
+- **Back-End**: [React Native](https://reactnative.dev/)
+- **Banco de Dados**: [Supabase](https://supabase.com/)
+- **Ferramentas de Design**: [Figma](https://figma.com) para prototipagem das telas
+
+## Executando o Projeto em Ambiente de Desenvolvimento
+
+1. Clone o repositório:
 
    ```bash
-   npm install
+   git clone https:[https://github.com/Maanux/Finansia.git](https://github.com/Maanux/Finansia.git)
    ```
 
-2. Start the app
+2. Instale as dependências do projeto:
 
    ```bash
-    npx expo start
+   cd finansia
+   yarn
+   yarn add typescript@5.3.3 --dev
+
    ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
-```
-
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
-
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
