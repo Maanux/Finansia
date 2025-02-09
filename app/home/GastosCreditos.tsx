@@ -35,8 +35,11 @@ export default function GastosCreditos() {
 
   // Função para buscar os gastos do usuário logado
   const fetchGastos = async () => {
-    const usuarioLogado = await CacheService.getItem("usuarioLogado");
-    if (usuarioLogado) {
+    const usuarioLogado = (await CacheService.getItem("usuarioLogado")) as {
+      id: number;
+    } | null;
+
+    if (usuarioLogado?.id) {
       const gastos = await CreditoService.getGastosByUsuarioId(
         usuarioLogado.id
       );
@@ -50,8 +53,11 @@ export default function GastosCreditos() {
 
   // Função para adicionar um novo gasto
   const handleAdicionarGasto = async () => {
-    const usuarioLogado = await CacheService.getItem("usuarioLogado");
-    if (usuarioLogado) {
+    const usuarioLogado = (await CacheService.getItem("usuarioLogado")) as {
+      id: number;
+    } | null;
+
+    if (usuarioLogado?.id) {
       // Validação dos campos
       if (!nome || !valor || !dataHoraGasto) {
         console.log("Preencha todos os campos!");
@@ -119,13 +125,9 @@ export default function GastosCreditos() {
       <ScrollView contentContainerStyle={styles.scrollView}>
         {gastos.map((gasto) => (
           <View key={String(gasto.id)} style={styles.gastoBloco}>
-            <Text style={styles.gastoTitulo}>{String(gasto.nome)}</Text>
-            <Text style={styles.gastoValor}>
-              R$ {Number(gasto.valor).toFixed(2)}
-            </Text>
-            <Text style={styles.gastoData}>
-              {String(gasto.data_hora_gasto)}
-            </Text>
+            <Text style={styles.gastoTitulo}>{gasto.nome}</Text>
+            <Text style={styles.gastoValor}>R$ {gasto.valor.toFixed(2)}</Text>
+            <Text style={styles.gastoData}>{gasto.data_hora_gasto}</Text>
           </View>
         ))}
       </ScrollView>

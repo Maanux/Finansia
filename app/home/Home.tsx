@@ -10,6 +10,10 @@ import gastosMensais from "@/components/styles/Home/gastosMensais";
 import gastosCreditos from "@/components/styles/Home/gastosCredito";
 import sobrou from "@/components/styles/Home/sobrou";
 
+type Usuario = {
+  id: number;
+};
+
 export default function Home() {
   const [totalGanhos, setTotalGanhos] = useState(0);
   const [totalGastosMensais, setTotalGastosMensais] = useState(0);
@@ -17,7 +21,8 @@ export default function Home() {
 
   useEffect(() => {
     async function fetchDadosFinanceiros() {
-      const usuarioLogado = await UsuarioService.getUsuarioLogado();
+      const usuarioLogado =
+        (await UsuarioService.getUsuarioLogado()) as Usuario | null;
       if (usuarioLogado) {
         const somaGanhos = await GanhosService.getTotalGanhos(usuarioLogado.id);
         const somaGastosMensais = await MensaisService.getTotalGastos(
@@ -38,7 +43,8 @@ export default function Home() {
 
   // Função para atualizar os dados financeiros após adicionar ganhos ou gastos
   const recarregarDados = async () => {
-    const usuarioLogado = await UsuarioService.getUsuarioLogado();
+    const usuarioLogado =
+      (await UsuarioService.getUsuarioLogado()) as Usuario | null;
     if (usuarioLogado) {
       const somaGanhos = await GanhosService.getTotalGanhos(usuarioLogado.id);
       const somaGastosMensais = await MensaisService.getTotalGastos(

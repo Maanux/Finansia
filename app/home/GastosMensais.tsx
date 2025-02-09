@@ -21,6 +21,10 @@ type Gasto = {
   data_hora_gasto: string;
 };
 
+type UsuarioLogado = {
+  id: number;
+};
+
 export default function GastosMensais() {
   const [gastos, setGastos] = useState<Gasto[]>([]);
   const [nome, setNome] = useState("");
@@ -35,8 +39,10 @@ export default function GastosMensais() {
 
   // Função para buscar os gastos do usuário logado
   const fetchGastos = async () => {
-    const usuarioLogado = await CacheService.getItem("usuarioLogado");
-    if (usuarioLogado) {
+    const usuarioLogado = (await CacheService.getItem(
+      "usuarioLogado"
+    )) as UsuarioLogado | null;
+    if (usuarioLogado?.id) {
       const gastos = await MensaisService.getGastosByUsuarioId(
         usuarioLogado.id
       );
@@ -48,10 +54,29 @@ export default function GastosMensais() {
     }
   };
 
+  // Função para recarregar os dados financeiros após adicionar um novo gasto
+  const recarregarDados = async () => {
+    const usuarioLogado = (await CacheService.getItem(
+      "usuarioLogado"
+    )) as UsuarioLogado | null;
+    if (usuarioLogado?.id) {
+      const gastosAtualizados = await MensaisService.getGastosByUsuarioId(
+        usuarioLogado.id
+      );
+      const totalAtualizado = await MensaisService.getTotalGastos(
+        usuarioLogado.id
+      );
+      setGastos(gastosAtualizados);
+      setTotalGastos(totalAtualizado);
+    }
+  };
+
   // Função para adicionar um novo gasto
   const handleAdicionarGasto = async () => {
-    const usuarioLogado = await CacheService.getItem("usuarioLogado");
-    if (usuarioLogado) {
+    const usuarioLogado = (await CacheService.getItem(
+      "usuarioLogado"
+    )) as UsuarioLogado | null;
+    if (usuarioLogado?.id) {
       // Validação dos campos
       if (!nome || !valor || !dataHoraGasto) {
         console.log("Preencha todos os campos!");
@@ -78,9 +103,8 @@ export default function GastosMensais() {
       setValor("");
       setDataHoraGasto("");
 
-      // Atualiza o total de gastos diretamente
-      const total = await MensaisService.getTotalGastos(usuarioLogado.id);
-      setTotalGastos(total);
+      // Recarrega a lista de gastos e o total de gastos
+      recarregarDados(); // Chama a função para recarregar os dados
     }
   };
 

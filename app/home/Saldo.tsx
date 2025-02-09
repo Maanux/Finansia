@@ -21,6 +21,10 @@ type Ganho = {
   data_hora_ganho: string;
 };
 
+type UsuarioLogado = {
+  id: number;
+};
+
 export default function Saldo() {
   const [ganhos, setGanhos] = useState<Ganho[]>([]);
   const [titulo, setTitulo] = useState("");
@@ -32,15 +36,23 @@ export default function Saldo() {
   useEffect(() => {
     const fetchDados = async () => {
       const usuarioLogado = await CacheService.getItem("usuarioLogado");
-      if (usuarioLogado) {
+
+      // Verifica se o usuarioLogado possui a propriedade id
+      if (usuarioLogado && (usuarioLogado as UsuarioLogado).id) {
+        const usuarioLogadoValidado = usuarioLogado as UsuarioLogado;
+
         // Carrega os ganhos e o total de ganhos
         const ganhos = await GanhosService.getGanhosByUsuarioId(
-          usuarioLogado.id
+          usuarioLogadoValidado.id
         );
-        const total = await GanhosService.getTotalGanhos(usuarioLogado.id);
+        const total = await GanhosService.getTotalGanhos(
+          usuarioLogadoValidado.id
+        );
 
         setGanhos(ganhos);
         setTotalGanhos(total);
+      } else {
+        console.error("Usuário não logado ou id inválido");
       }
     };
 
@@ -50,12 +62,14 @@ export default function Saldo() {
   // Função para recarregar os dados financeiros após adicionar um novo ganho
   const recarregarDados = async () => {
     const usuarioLogado = await CacheService.getItem("usuarioLogado");
-    if (usuarioLogado) {
+    if (usuarioLogado && (usuarioLogado as UsuarioLogado).id) {
+      const usuarioLogadoValidado = usuarioLogado as UsuarioLogado;
+
       const ganhosAtualizados = await GanhosService.getGanhosByUsuarioId(
-        usuarioLogado.id
+        usuarioLogadoValidado.id
       );
       const totalAtualizado = await GanhosService.getTotalGanhos(
-        usuarioLogado.id
+        usuarioLogadoValidado.id
       );
 
       setGanhos(ganhosAtualizados);
@@ -66,10 +80,12 @@ export default function Saldo() {
   // Função para adicionar um novo ganho
   const handleAdicionarGanho = async () => {
     const usuarioLogado = await CacheService.getItem("usuarioLogado");
-    if (usuarioLogado) {
+    if (usuarioLogado && (usuarioLogado as UsuarioLogado).id) {
+      const usuarioLogadoValidado = usuarioLogado as UsuarioLogado;
+
       // Chama a função para adicionar o ganho e obter o total de ganhos atualizado
       const { totalGanhos } = await GanhosService.addGanho(
-        usuarioLogado.id,
+        usuarioLogadoValidado.id,
         titulo,
         parseFloat(valor),
         dataHoraGanho

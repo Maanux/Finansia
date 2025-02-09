@@ -10,8 +10,11 @@ export default function Perfil() {
   useEffect(() => {
     // Função para buscar os dados do usuário logado
     const fetchUser = async () => {
-      const usuarioLogado = await CacheService.getItem("usuarioLogado");
-      if (usuarioLogado) {
+      const usuarioLogado = (await CacheService.getItem("usuarioLogado")) as {
+        id: string;
+      } | null;
+
+      if (usuarioLogado?.id) {
         const { data, error } = await supabase
           .from("usuario")
           .select("primeiro_nome, ultimo_nome")
@@ -20,9 +23,9 @@ export default function Perfil() {
 
         if (error) {
           console.error("Erro ao buscar dados do usuário:", error);
-        } else {
+        } else if (data) {
           // Combina o primeiro e último nome
-          setNomeCompleto(`${data?.primeiro_nome} ${data?.ultimo_nome}`);
+          setNomeCompleto(`${data.primeiro_nome} ${data.ultimo_nome}`);
         }
       }
     };
