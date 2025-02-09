@@ -5,22 +5,23 @@ import {
   TouchableOpacity,
   TextInput,
 } from "react-native";
-import React from "react";
-import { router } from "expo-router";
-import container from "@/components/container/container";
-import tituloLogin from "@/components/Index/tituloLogin";
-import backgroundLogin from "@/components/Index/backgroundLogin";
-import placeholder from "@/components/Index/placeHolderIndex";
-import botaoLogar from "@/components/Index/botaoLogar";
-import inscrever from "@/components/Index/inscreverSe";
+import React, { useState } from "react";
+import container from "@/components/styles/container/container";
+import tituloLogin from "@/components/styles/Index/tituloLogin";
+import backgroundLogin from "@/components/styles/Index/backgroundLogin";
+import placeholder from "@/components/styles/Index/placeHolderIndex";
+import botaoLogar from "@/components/styles/Index/botaoLogar";
+import inscrever from "@/components/styles/Index/inscreverSe";
+import LoginService from "@/service/LoginService";
 
 export default function Index() {
-  const vaiparaHome = () => {
-    router.push("./home/Home");
-  };
+  const [apelido, setApelido] = useState("");
+  const [senha, setSenha] = useState("");
 
-  const vaiParaRegister = () => {
-    router.push("/register");
+  const { fazLogin, vaiParaRegister } = LoginService();
+
+  const handleLogin = () => {
+    fazLogin(apelido, senha);
   };
 
   return (
@@ -28,10 +29,19 @@ export default function Index() {
       <View style={backgroundLogin.backgroundLogin}>
         <Text style={tituloLogin.titleLogin}>Login</Text>
         <Text style={placeholder.placeholderTitulo}>Apelido</Text>
-        <TextInput style={placeholder.placeholderTexto}></TextInput>
+        <TextInput
+          value={apelido}
+          onChangeText={setApelido}
+          style={placeholder.placeholderTexto}
+        ></TextInput>
         <Text style={placeholder.placeholderTitulo}>Senha</Text>
-        <TextInput style={placeholder.placeholderTexto}></TextInput>
-        <TouchableOpacity style={botaoLogar.botaoLogin} onPress={vaiparaHome}>
+        <TextInput
+          value={senha}
+          onChangeText={setSenha}
+          secureTextEntry={true}
+          style={placeholder.placeholderTexto}
+        ></TextInput>
+        <TouchableOpacity style={botaoLogar.botaoLogin} onPress={handleLogin}>
           <Text style={botaoLogar.textoBotao}>Logar</Text>
         </TouchableOpacity>
         <TouchableOpacity onPress={vaiParaRegister}>

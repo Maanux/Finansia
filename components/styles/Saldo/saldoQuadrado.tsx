@@ -15,7 +15,6 @@ const saldo = StyleSheet.create({
 
   saldoTitulo: {
     fontSize: 20,
-    left: 20,
     marginBottom: 5,
   },
 

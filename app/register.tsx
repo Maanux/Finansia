@@ -5,38 +5,76 @@ import {
   TouchableOpacity,
   ScrollView,
 } from "react-native";
-import React from "react";
-import container from "@/components/container/container";
-import backgroundRegister from "@/components/Register/backgroundRegister";
-import tituloRegister from "@/components/Register/tituloRegister";
-import placeholder from "@/components/Register/placeHolderRegister";
-import botaoRegistar from "@/components/Register/botaoRegistrar";
-import registrada from "@/components/Register/contaRegistradaTexto";
-import { router } from "expo-router";
+import React, { useState } from "react";
+import container from "@/components/styles/container/container";
+import backgroundRegister from "@/components/styles/Register/backgroundRegister";
+import tituloRegister from "@/components/styles/Register/tituloRegister";
+import placeholder from "@/components/styles/Register/placeHolderRegister";
+import botaoRegistar from "@/components/styles/Register/botaoRegistrar";
+import registrada from "@/components/styles/Register/contaRegistradaTexto";
+import UserService from "@/service/ResgistraService";
 
 export default function register() {
-  const voltaLogin = () => {
-    router.back();
+  const [primeiroNome, setPrimeironome] = useState("");
+  const [ultimoNome, setUltimoNome] = useState("");
+  const [apelido, setApelido] = useState("");
+  const [senha, setSenha] = useState("");
+  const [confirmeSenha, setConfirmeSenha] = useState("");
+
+  const { registrar, voltarLogin } = UserService();
+
+  const handleRegister = () => {
+    if (senha !== confirmeSenha) {
+      console.log("As senhas não coincidem!");
+      return;
+    }
+    registrar(primeiroNome, ultimoNome, apelido, senha);
   };
+
   return (
     <ScrollView>
       <View style={container.container}>
         <View style={backgroundRegister.backgroundRegister}>
           <Text style={tituloRegister.tituloRegister}>Registre-se</Text>
           <Text style={placeholder.placeholderTitulo}>Primeiro Nome</Text>
-          <TextInput style={placeholder.placeholderTexto}></TextInput>
+          <TextInput
+            value={primeiroNome}
+            onChangeText={setPrimeironome}
+            style={placeholder.placeholderTexto}
+          ></TextInput>
           <Text style={placeholder.placeholderTitulo}>Último Nome</Text>
-          <TextInput style={placeholder.placeholderTexto}></TextInput>
+          <TextInput
+            value={ultimoNome}
+            onChangeText={setUltimoNome}
+            style={placeholder.placeholderTexto}
+          ></TextInput>
           <Text style={placeholder.placeholderTitulo}>Apelido</Text>
-          <TextInput style={placeholder.placeholderTexto}></TextInput>
+          <TextInput
+            value={apelido}
+            onChangeText={setApelido}
+            style={placeholder.placeholderTexto}
+          ></TextInput>
           <Text style={placeholder.placeholderTitulo}>Senha</Text>
-          <TextInput style={placeholder.placeholderTexto}></TextInput>
+          <TextInput
+            value={senha}
+            onChangeText={setSenha}
+            secureTextEntry={true}
+            style={placeholder.placeholderTexto}
+          ></TextInput>
           <Text style={placeholder.placeholderTitulo}>Confirme a Senha</Text>
-          <TextInput style={placeholder.placeholderTexto}></TextInput>
-          <TouchableOpacity style={botaoRegistar.botaoRegistar}>
+          <TextInput
+            value={confirmeSenha}
+            onChangeText={setConfirmeSenha}
+            secureTextEntry={true}
+            style={placeholder.placeholderTexto}
+          ></TextInput>
+          <TouchableOpacity
+            onPress={handleRegister}
+            style={botaoRegistar.botaoRegistar}
+          >
             <Text style={botaoRegistar.textoBotao}>Registar</Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={voltaLogin}>
+          <TouchableOpacity onPress={voltarLogin}>
             <Text style={registrada.registrada}>Já tem uma conta? Entre</Text>
           </TouchableOpacity>
         </View>

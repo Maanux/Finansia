@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -5,92 +6,92 @@ import {
   TouchableOpacity,
   ScrollView,
 } from "react-native";
-import React, { useState } from "react";
-import container from "@/components/Home/containerHome";
-import saldo from "@/components/Saldo/saldoQuadrado";
-import adicionaSaldo from "@/components/Saldo/adicionaSaldo";
-import placeholderSaldo from "@/components/Saldo/placeHolderSaldo";
+import container from "@/components/styles/Home/containerHome";
+import saldo from "@/components/styles/Saldo/saldoQuadrado";
+import adicionaSaldo from "@/components/styles/Saldo/adicionaSaldo";
+import placeholderSaldo from "@/components/styles/Saldo/placeHolderSaldo";
 import DataHora from "@/components/DataEHora";
+import CacheService from "@/service/CacheService";
+import GanhosService from "@/service/GanhosService";
 
-// Definição do tipo Ganho
 type Ganho = {
   id: number;
-  titulo: string;
-  valor: string;
-  data: string;
+  nome: string;
+  valor: number;
+  data_hora_ganho: string;
 };
 
 export default function Saldo() {
-  // Tipando o estado corretamente
-  const [ganhos, setGanhos] = useState<Ganho[]>([
-    { id: 1, titulo: "Salário", valor: "R$ 2500,00", data: "01/02/2025 08:00" },
-    {
-      id: 2,
-      titulo: "Freelance",
-      valor: "R$ 300,00",
-      data: "02/02/2025 14:30",
-    },
-    {
-      id: 2,
-      titulo: "Freelance",
-      valor: "R$ 300,00",
-      data: "02/02/2025 14:30",
-    },
-    {
-      id: 3,
-      titulo: "Freelance",
-      valor: "R$ 300,00",
-      data: "02/02/2025 14:30",
-    },
-    {
-      id: 4,
-      titulo: "Freelance",
-      valor: "R$ 300,00",
-      data: "02/02/2025 14:30",
-    },
-    {
-      id: 5,
-      titulo: "Freelance",
-      valor: "R$ 300,00",
-      data: "02/02/2025 14:30",
-    },
-    {
-      id: 6,
-      titulo: "Freelance",
-      valor: "R$ 300,00",
-      data: "02/02/2025 14:30",
-    },
-    {
-      id: 7,
-      titulo: "Freelance",
-      valor: "R$ 300,00",
-      data: "02/02/2025 14:30",
-    },
-    {
-      id: 8,
-      titulo: "Freelance",
-      valor: "R$ 300,00",
-      data: "02/02/2025 14:30",
-    },
-    {
-      id: 9,
-      titulo: "Freelance",
-      valor: "R$ 300,00",
-      data: "02/02/2025 14:30",
-    },
-    {
-      id: 10,
-      titulo: "Freelance",
-      valor: "R$ 300,00",
-      data: "02/02/2025 14:30",
-    },
-  ]);
+  const [ganhos, setGanhos] = useState<Ganho[]>([]);
+  const [titulo, setTitulo] = useState("");
+  const [valor, setValor] = useState("");
+  const [dataHoraGanho, setDataHoraGanho] = useState("");
+  const [totalGanhos, setTotalGanhos] = useState(0);
+
+  // Carrega os ganhos e o total de ganhos na renderização inicial
+  useEffect(() => {
+    const fetchDados = async () => {
+      const usuarioLogado = await CacheService.getItem("usuarioLogado");
+      if (usuarioLogado) {
+        // Carrega os ganhos e o total de ganhos
+        const ganhos = await GanhosService.getGanhosByUsuarioId(
+          usuarioLogado.id
+        );
+        const total = await GanhosService.getTotalGanhos(usuarioLogado.id);
+
+        setGanhos(ganhos);
+        setTotalGanhos(total);
+      }
+    };
+
+    fetchDados();
+  }, []);
+
+  // Função para recarregar os dados financeiros após adicionar um novo ganho
+  const recarregarDados = async () => {
+    const usuarioLogado = await CacheService.getItem("usuarioLogado");
+    if (usuarioLogado) {
+      const ganhosAtualizados = await GanhosService.getGanhosByUsuarioId(
+        usuarioLogado.id
+      );
+      const totalAtualizado = await GanhosService.getTotalGanhos(
+        usuarioLogado.id
+      );
+
+      setGanhos(ganhosAtualizados);
+      setTotalGanhos(totalAtualizado);
+    }
+  };
+
+  // Função para adicionar um novo ganho
+  const handleAdicionarGanho = async () => {
+    const usuarioLogado = await CacheService.getItem("usuarioLogado");
+    if (usuarioLogado) {
+      // Chama a função para adicionar o ganho e obter o total de ganhos atualizado
+      const { totalGanhos } = await GanhosService.addGanho(
+        usuarioLogado.id,
+        titulo,
+        parseFloat(valor),
+        dataHoraGanho
+      );
+
+      setTitulo("");
+      setValor("");
+      setDataHoraGanho("");
+
+      // Atualiza o estado do total de ganhos no componente
+      setTotalGanhos(totalGanhos);
+
+      // Atualiza a lista de ganhos e o total de ganhos após adicionar o novo ganho
+      recarregarDados();
+    }
+  };
 
   return (
     <View style={container.container}>
       <View style={saldo.quadradoSaldo}>
         <Text style={saldo.saldoTitulo}>Saldo</Text>
-        <Text style={saldo.saldoTexto}>R$ 1.899,00</Text>
+        <Text style={saldo.saldoTexto}>R$ {totalGanhos.toFixed(2)}</Text>
       </View>
 
       <View>
@@ -98,25 +99,35 @@ export default function Saldo() {
         <TextInput
           style={placeholderSaldo.placeholderSaldo}
           placeholder="Nome"
+          value={titulo}
+          onChangeText={setTitulo}
         />
         <TextInput
           style={placeholderSaldo.placeholderSaldo}
           placeholder="Valor"
+          value={valor}
+          onChangeText={setValor}
+          keyboardType="numeric"
         />
-        <DataHora />
-        <TouchableOpacity style={adicionaSaldo.botaoSaldo}>
+        <DataHora onDateSelected={(date) => setDataHoraGanho(date)} />
+        <TouchableOpacity
+          style={adicionaSaldo.botaoSaldo}
+          onPress={handleAdicionarGanho}
+        >
           <Text style={adicionaSaldo.textoBotao}>Adicionar</Text>
         </TouchableOpacity>
       </View>
 
       <ScrollView contentContainerStyle={styles.scrollView}>
-        {/* Vou colocar a lista de ganhos aqui teste */}
-
         {ganhos.map((ganho) => (
-          <View key={ganho.id} style={styles.ganhoBloco}>
-            <Text style={styles.ganhoTitulo}>{ganho.titulo}</Text>
-            <Text style={styles.ganhoValor}>{ganho.valor}</Text>
-            <Text style={styles.ganhoData}>{ganho.data}</Text>
+          <View key={String(ganho.id)} style={styles.ganhoBloco}>
+            <Text style={styles.ganhoTitulo}>{String(ganho.nome)}</Text>
+            <Text style={styles.ganhoValor}>
+              R$ {Number(ganho.valor).toFixed(2)}
+            </Text>
+            <Text style={styles.ganhoData}>
+              {String(ganho.data_hora_ganho)}
+            </Text>
           </View>
         ))}
       </ScrollView>
@@ -129,7 +140,6 @@ const styles = {
     padding: 20,
     marginTop: 20,
   },
-
   ganhoBloco: {
     backgroundColor: "#e3e3e3",
     padding: 15,

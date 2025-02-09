@@ -16,14 +16,15 @@ const perfil = StyleSheet.create({
   sairPerfil: {
     color: "red",
     top: 125,
-    left: 80,
+    textAlign: "center",
   },
   bemVindoPerfil: {
     bottom: 130,
-    left: 30,
+    textAlign: "center",
   },
   nomeCompleto: {
     bottom: 100,
+    textAlign: "center",
   },
 });
 

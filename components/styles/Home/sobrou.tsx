@@ -4,7 +4,7 @@ const sobrou = StyleSheet.create({
   sobrouBotao: {
     backgroundColor: "#8BADF5",
     paddingVertical: 25,
-    paddingHorizontal: 130,
+    paddingHorizontal: 115,
     borderColor: "#0022FF",
     borderWidth: 6,
     borderRadius: 5,
@@ -13,11 +13,9 @@ const sobrou = StyleSheet.create({
   textosobrou: {
     fontSize: 17,
     marginBottom: 7,
-    left: 15,
   },
   valorsobrou: {
     fontSize: 22,
-    right: 10,
   },
 });
 

@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -5,115 +6,125 @@ import {
   TouchableOpacity,
   ScrollView,
 } from "react-native";
-import React, { useState } from "react";
-import container from "@/components/Home/containerHome";
-import mensais from "@/components/GastosMensais/blocosMensais";
+import container from "@/components/styles/Home/containerHome";
+import mensais from "@/components/styles/GastosMensais/blocosMensais";
 import DataHora from "@/components/DataEHora";
-import adicionaMensal from "@/components/GastosMensais/adicionaMensal";
-import placeholderMensal from "@/components/GastosMensais/placeHolderMensal";
+import adicionaMensal from "@/components/styles/GastosMensais/adicionaMensal";
+import placeholderMensal from "@/components/styles/GastosMensais/placeHolderMensal";
+import CacheService from "@/service/CacheService";
+import MensaisService from "@/service/MensaisService";
 
-// Definição do tipo Ganho
-type Ganho = {
+type Gasto = {
   id: number;
-  titulo: string;
-  valor: string;
-  data: string;
+  nome: string;
+  valor: number;
+  data_hora_gasto: string;
 };
 
 export default function GastosMensais() {
-  // Tipando o estado corretamente
-  const [ganhos, setGanhos] = useState<Ganho[]>([
-    { id: 1, titulo: "Salário", valor: "R$ 2500,00", data: "01/02/2025 08:00" },
-    {
-      id: 2,
-      titulo: "Freelance",
-      valor: "R$ 300,00",
-      data: "02/02/2025 14:30",
-    },
-    {
-      id: 2,
-      titulo: "Freelance",
-      valor: "R$ 300,00",
-      data: "02/02/2025 14:30",
-    },
-    {
-      id: 3,
-      titulo: "Freelance",
-      valor: "R$ 300,00",
-      data: "02/02/2025 14:30",
-    },
-    {
-      id: 4,
-      titulo: "Freelance",
-      valor: "R$ 300,00",
-      data: "02/02/2025 14:30",
-    },
-    {
-      id: 5,
-      titulo: "Freelance",
-      valor: "R$ 300,00",
-      data: "02/02/2025 14:30",
-    },
-    {
-      id: 6,
-      titulo: "Freelance",
-      valor: "R$ 300,00",
-      data: "02/02/2025 14:30",
-    },
-    {
-      id: 7,
-      titulo: "Freelance",
-      valor: "R$ 300,00",
-      data: "02/02/2025 14:30",
-    },
-    {
-      id: 8,
-      titulo: "Freelance",
-      valor: "R$ 300,00",
-      data: "02/02/2025 14:30",
-    },
-    {
-      id: 9,
-      titulo: "Freelance",
-      valor: "R$ 300,00",
-      data: "02/02/2025 14:30",
-    },
-    {
-      id: 10,
-      titulo: "Freelance",
-      valor: "R$ 300,00",
-      data: "02/02/2025 14:30",
-    },
-  ]);
+  const [gastos, setGastos] = useState<Gasto[]>([]);
+  const [nome, setNome] = useState("");
+  const [valor, setValor] = useState("");
+  const [dataHoraGasto, setDataHoraGasto] = useState("");
+  const [totalGastos, setTotalGastos] = useState(0);
+
+  // Busca os gastos ao carregar o componente
+  useEffect(() => {
+    fetchGastos();
+  }, []);
+
+  // Função para buscar os gastos do usuário logado
+  const fetchGastos = async () => {
+    const usuarioLogado = await CacheService.getItem("usuarioLogado");
+    if (usuarioLogado) {
+      const gastos = await MensaisService.getGastosByUsuarioId(
+        usuarioLogado.id
+      );
+      setGastos(gastos);
+
+      // Calcular o total de gastos
+      const total = gastos.reduce((acc, gasto) => acc + gasto.valor, 0);
+      setTotalGastos(total);
+    }
+  };
+
+  // Função para adicionar um novo gasto
+  const handleAdicionarGasto = async () => {
+    const usuarioLogado = await CacheService.getItem("usuarioLogado");
+    if (usuarioLogado) {
+      // Validação dos campos
+      if (!nome || !valor || !dataHoraGasto) {
+        console.log("Preencha todos os campos!");
+        return;
+      }
+
+      // Converte o valor para número
+      const valorNumerico = parseFloat(valor);
+      if (isNaN(valorNumerico)) {
+        console.log("Valor inválido!");
+        return;
+      }
+
+      // Adiciona o gasto
+      await MensaisService.addGasto(
+        usuarioLogado.id,
+        nome,
+        valorNumerico,
+        dataHoraGasto
+      );
+
+      // Limpa os campos
+      setNome("");
+      setValor("");
+      setDataHoraGasto("");
+
+      // Atualiza o total de gastos diretamente
+      const total = await MensaisService.getTotalGastos(usuarioLogado.id);
+      setTotalGastos(total);
+    }
+  };
+
   return (
     <View style={container.container}>
       <View style={mensais.blocoMensais}>
-        <Text style={mensais.mensalTitulo}>Gasto Mensal</Text>
-        <Text style={mensais.mensalTexto}>R$ -899,00</Text>
+        <Text style={mensais.mensalTitulo}>Mensal</Text>
+        <Text style={mensais.mensalTexto}>R$ {totalGastos.toFixed(2)}</Text>
       </View>
+
       <View>
         <Text style={adicionaMensal.textoTitulo}>Adicionar Gastos Mensais</Text>
         <TextInput
           style={placeholderMensal.placeholderMensal}
           placeholder="Nome"
+          value={nome}
+          onChangeText={setNome}
         />
         <TextInput
           style={placeholderMensal.placeholderMensal}
           placeholder="Valor"
+          value={valor}
+          onChangeText={setValor}
+          keyboardType="numeric"
         />
-        <DataHora />
-        <TouchableOpacity style={adicionaMensal.botaoMensal}>
+        <DataHora onDateSelected={(date) => setDataHoraGasto(date)} />
+        <TouchableOpacity
+          style={adicionaMensal.botaoMensal}
+          onPress={handleAdicionarGasto}
+        >
           <Text style={adicionaMensal.textoBotao}>Adicionar</Text>
         </TouchableOpacity>
       </View>
-      <ScrollView contentContainerStyle={styles.scrollView}>
-        {/* Vou colocar a lista de ganhos aqui teste */}
 
-        {ganhos.map((ganho) => (
-          <View key={ganho.id} style={styles.ganhoBloco}>
-            <Text style={styles.ganhoTitulo}>{ganho.titulo}</Text>
-            <Text style={styles.ganhoValor}>{ganho.valor}</Text>
-            <Text style={styles.ganhoData}>{ganho.data}</Text>
+      <ScrollView contentContainerStyle={styles.scrollView}>
+        {gastos.map((gasto) => (
+          <View key={String(gasto.id)} style={styles.gastoBloco}>
+            <Text style={styles.gastoTitulo}>{String(gasto.nome)}</Text>
+            <Text style={styles.gastoValor}>
+              R$ {Number(gasto.valor).toFixed(2)}
+            </Text>
+            <Text style={styles.gastoData}>
+              {String(gasto.data_hora_gasto)}
+            </Text>
           </View>
         ))}
       </ScrollView>
@@ -126,21 +137,20 @@ const styles = {
     padding: 20,
     marginTop: 20,
   },
-
-  ganhoBloco: {
+  gastoBloco: {
     backgroundColor: "#e3e3e3",
     padding: 15,
     borderRadius: 8,
     marginVertical: 5,
   },
-  ganhoTitulo: {
+  gastoTitulo: {
     fontSize: 16,
   },
-  ganhoValor: {
+  gastoValor: {
     fontSize: 14,
-    color: "green",
+    color: "#FFFF0C",
   },
-  ganhoData: {
+  gastoData: {
     fontSize: 12,
     color: "#777",
   },

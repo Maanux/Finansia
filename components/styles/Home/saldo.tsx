@@ -14,7 +14,6 @@ const saldo = StyleSheet.create({
   textoSaldo: {
     fontSize: 17,
     marginBottom: 7,
-    left: 28,
   },
   valorSaldo: {
     fontSize: 21,
