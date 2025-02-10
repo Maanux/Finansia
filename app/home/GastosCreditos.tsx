@@ -29,11 +29,13 @@ export default function GastosCreditos() {
   const [totalGastos, setTotalGastos] = useState(0);
 
   // Busca os gastos ao carregar o componente
+
   useEffect(() => {
     fetchGastos();
   }, []);
 
   // Função para buscar os gastos do usuário logado
+
   const fetchGastos = async () => {
     const usuarioLogado = (await CacheService.getItem("usuarioLogado")) as {
       id: number;

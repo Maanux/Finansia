@@ -1,10 +1,12 @@
 import { View, Text } from "react-native";
 import React from "react";
 
-import { router } from "expo-router";
+import { router, useNavigation } from "expo-router";
 import { supabase } from "./supaBase";
+import { CommonActions } from "@react-navigation/native";
 
 export default function UserService() {
+  const navigation = useNavigation();
   //-----------------------------------------
 
   async function createUser(
@@ -41,7 +43,7 @@ export default function UserService() {
   ) {
     let res = await createUser(primeiroNome, ultimoNome, apelido, senha);
     if (res) {
-      router.back();
+      navigation.dispatch(CommonActions.goBack());
     } else {
       console.log("Erro ao registrar usuário.");
     }

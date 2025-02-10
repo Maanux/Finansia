@@ -24,7 +24,7 @@ export default class CreditoService {
   // Adiciona um novo gasto
   static async addGasto(
     usuarioId: number,
-    nome: string, // Usar "nome" em vez de "titulo"
+    nome: string,
     valor: number,
     dataHoraGasto: string
   ) {
@@ -34,7 +34,7 @@ export default class CreditoService {
         .insert([
           {
             usuario_id: usuarioId,
-            nome: nome, // Usar "nome" em vez de "titulo"
+            nome: nome,
             valor: valor,
             data_hora_gasto: dataHoraGasto,
           },

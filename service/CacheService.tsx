@@ -3,7 +3,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 class CacheService {
   private static instance: CacheService;
 
-  private constructor() {} // Privado para impedir criação externa
+  private constructor() {}
 
   public static getInstance(): CacheService {
     if (!CacheService.instance) {

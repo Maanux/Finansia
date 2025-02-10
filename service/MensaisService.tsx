@@ -106,7 +106,7 @@ export default class MensaisService {
       const { data, error } = await supabase
         .from("gastos_mensais")
         .select("valor")
-        .eq("usuario_id", usuarioId); // Certifique-se de filtrar por `usuario_id`
+        .eq("usuario_id", usuarioId);
 
       if (error) {
         throw error;

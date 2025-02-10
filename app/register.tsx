@@ -12,9 +12,9 @@ import tituloRegister from "@/components/styles/Register/tituloRegister";
 import placeholder from "@/components/styles/Register/placeHolderRegister";
 import botaoRegistar from "@/components/styles/Register/botaoRegistrar";
 import registrada from "@/components/styles/Register/contaRegistradaTexto";
-import UserService from "@/service/ResgistraService";
+import UserService from "@/service/ResgistraService"; // Verifique o nome correto aqui!
 
-export default function register() {
+export default function Register() {
   const [primeiroNome, setPrimeironome] = useState("");
   const [ultimoNome, setUltimoNome] = useState("");
   const [apelido, setApelido] = useState("");
@@ -22,6 +22,11 @@ export default function register() {
   const [confirmeSenha, setConfirmeSenha] = useState("");
 
   const { registrar, voltarLogin } = UserService();
+
+  // Função para validar se todos os campos estão preenchidos
+  const validarCampos = () => {
+    return primeiroNome && ultimoNome && apelido && senha && confirmeSenha;
+  };
 
   const handleRegister = () => {
     if (senha !== confirmeSenha) {
@@ -41,36 +46,40 @@ export default function register() {
             value={primeiroNome}
             onChangeText={setPrimeironome}
             style={placeholder.placeholderTexto}
-          ></TextInput>
+          />
           <Text style={placeholder.placeholderTitulo}>Último Nome</Text>
           <TextInput
             value={ultimoNome}
             onChangeText={setUltimoNome}
             style={placeholder.placeholderTexto}
-          ></TextInput>
+          />
           <Text style={placeholder.placeholderTitulo}>Apelido</Text>
           <TextInput
             value={apelido}
             onChangeText={setApelido}
             style={placeholder.placeholderTexto}
-          ></TextInput>
+          />
           <Text style={placeholder.placeholderTitulo}>Senha</Text>
           <TextInput
             value={senha}
             onChangeText={setSenha}
             secureTextEntry={true}
             style={placeholder.placeholderTexto}
-          ></TextInput>
+          />
           <Text style={placeholder.placeholderTitulo}>Confirme a Senha</Text>
           <TextInput
             value={confirmeSenha}
             onChangeText={setConfirmeSenha}
             secureTextEntry={true}
             style={placeholder.placeholderTexto}
-          ></TextInput>
+          />
           <TouchableOpacity
             onPress={handleRegister}
-            style={botaoRegistar.botaoRegistar}
+            style={[
+              botaoRegistar.botaoRegistar,
+              !validarCampos() && { backgroundColor: "#ccc" },
+            ]}
+            disabled={!validarCampos()}
           >
             <Text style={botaoRegistar.textoBotao}>Registar</Text>
           </TouchableOpacity>
