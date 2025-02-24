@@ -31,17 +31,15 @@ export default function Saldo() {
   const [valor, setValor] = useState("");
   const [dataHoraGanho, setDataHoraGanho] = useState("");
   const [totalGanhos, setTotalGanhos] = useState(0);
+  const [erroValor, setErroValor] = useState("");
 
-  // Carrega os ganhos e o total de ganhos na renderização inicial
   useEffect(() => {
     const fetchDados = async () => {
       const usuarioLogado = await CacheService.getItem("usuarioLogado");
 
-      // Verifica se o usuarioLogado possui a propriedade id
       if (usuarioLogado && (usuarioLogado as UsuarioLogado).id) {
         const usuarioLogadoValidado = usuarioLogado as UsuarioLogado;
 
-        // Carrega os ganhos e o total de ganhos
         const ganhos = await GanhosService.getGanhosByUsuarioId(
           usuarioLogadoValidado.id
         );
@@ -59,7 +57,6 @@ export default function Saldo() {
     fetchDados();
   }, []);
 
-  // Função para recarregar os dados financeiros após adicionar um novo ganho
   const recarregarDados = async () => {
     const usuarioLogado = await CacheService.getItem("usuarioLogado");
     if (usuarioLogado && (usuarioLogado as UsuarioLogado).id) {
@@ -77,13 +74,19 @@ export default function Saldo() {
     }
   };
 
-  // Função para adicionar um novo ganho
   const handleAdicionarGanho = async () => {
+    // Valida se o valor é um número válido
+    if (!/^\d+(\.\d{1,2})?$/.test(valor)) {
+      setErroValor("O valor deve conter apenas números!");
+      return;
+    }
+
+    setErroValor(""); // Remove mensagem de erro caso o valor esteja correto
+
     const usuarioLogado = await CacheService.getItem("usuarioLogado");
     if (usuarioLogado && (usuarioLogado as UsuarioLogado).id) {
       const usuarioLogadoValidado = usuarioLogado as UsuarioLogado;
 
-      // Chama a função para adicionar o ganho e obter o total de ganhos atualizado
       const { totalGanhos } = await GanhosService.addGanho(
         usuarioLogadoValidado.id,
         titulo,
@@ -94,11 +97,7 @@ export default function Saldo() {
       setTitulo("");
       setValor("");
       setDataHoraGanho("");
-
-      // Atualiza o estado do total de ganhos no componente
       setTotalGanhos(totalGanhos);
-
-      // Atualiza a lista de ganhos e o total de ganhos após adicionar o novo ganho
       recarregarDados();
     }
   };
@@ -125,6 +124,7 @@ export default function Saldo() {
           onChangeText={setValor}
           keyboardType="numeric"
         />
+        {erroValor ? <Text style={styles.erroTexto}>{erroValor}</Text> : null}
         <DataHora onDateSelected={(date) => setDataHoraGanho(date)} />
         <TouchableOpacity
           style={adicionaSaldo.botaoSaldo}
@@ -172,5 +172,10 @@ const styles = {
   ganhoData: {
     fontSize: 12,
     color: "#777",
+  },
+  erroTexto: {
+    color: "red",
+    fontSize: 12,
+    marginTop: 5,
   },
 };

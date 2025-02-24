@@ -16,9 +16,7 @@ O Finansia visa ajudar os usuários a gerenciar suas finanças de forma prática
 
 ### Funcionalidades Adicionais (futuras)
 
-- [ ] Análises de gasto por categoria
-- [ ] Alertas de limite de gasto
-- [ ] Relatórios e gráficos de tendência de despesas
+- [x] Análises de gasto por categoria
 
 ## Protótipos de Tela
 
@@ -58,7 +56,7 @@ A modelagem do banco de dados foi realizada para organizar os dados de usuários
 **Objetivo**: Finalização do app e entrega do APK
 
 - [x] Testar e ajustar funcionalidades básicas
-- [ ] Implementar e testar funcionalidades adicionais selecionadas
+- [x] Implementar e testar funcionalidades adicionais selecionadas
 
 ## Ambiente de Desenvolvimento e Ferramentas
 

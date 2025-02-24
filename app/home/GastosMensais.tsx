@@ -31,13 +31,12 @@ export default function GastosMensais() {
   const [valor, setValor] = useState("");
   const [dataHoraGasto, setDataHoraGasto] = useState("");
   const [totalGastos, setTotalGastos] = useState(0);
+  const [erroValor, setErroValor] = useState("");
 
-  // Busca os gastos ao carregar o componente
   useEffect(() => {
     fetchGastos();
   }, []);
 
-  // Função para buscar os gastos do usuário logado
   const fetchGastos = async () => {
     const usuarioLogado = (await CacheService.getItem(
       "usuarioLogado"
@@ -47,14 +46,11 @@ export default function GastosMensais() {
         usuarioLogado.id
       );
       setGastos(gastos);
-
-      // Calcular o total de gastos
       const total = gastos.reduce((acc, gasto) => acc + gasto.valor, 0);
       setTotalGastos(total);
     }
   };
 
-  // Função para recarregar os dados financeiros após adicionar um novo gasto
   const recarregarDados = async () => {
     const usuarioLogado = (await CacheService.getItem(
       "usuarioLogado"
@@ -71,40 +67,28 @@ export default function GastosMensais() {
     }
   };
 
-  // Função para adicionar um novo gasto
   const handleAdicionarGasto = async () => {
+    if (!/^[0-9]+(\.[0-9]{1,2})?$/.test(valor)) {
+      setErroValor("O valor deve conter apenas números!");
+      return;
+    }
+
+    setErroValor("");
+
     const usuarioLogado = (await CacheService.getItem(
       "usuarioLogado"
     )) as UsuarioLogado | null;
     if (usuarioLogado?.id) {
-      // Validação dos campos
-      if (!nome || !valor || !dataHoraGasto) {
-        console.log("Preencha todos os campos!");
-        return;
-      }
-
-      // Converte o valor para número
-      const valorNumerico = parseFloat(valor);
-      if (isNaN(valorNumerico)) {
-        console.log("Valor inválido!");
-        return;
-      }
-
-      // Adiciona o gasto
       await MensaisService.addGasto(
         usuarioLogado.id,
         nome,
-        valorNumerico,
+        parseFloat(valor),
         dataHoraGasto
       );
-
-      // Limpa os campos
       setNome("");
       setValor("");
       setDataHoraGasto("");
-
-      // Recarrega a lista de gastos e o total de gastos
-      recarregarDados(); // Chama a função para recarregar os dados
+      recarregarDados();
     }
   };
 
@@ -130,6 +114,7 @@ export default function GastosMensais() {
           onChangeText={setValor}
           keyboardType="numeric"
         />
+        {erroValor ? <Text style={styles.erroTexto}>{erroValor}</Text> : null}
         <DataHora onDateSelected={(date) => setDataHoraGasto(date)} />
         <TouchableOpacity
           style={adicionaMensal.botaoMensal}
@@ -177,5 +162,10 @@ const styles = {
   gastoData: {
     fontSize: 12,
     color: "#777",
+  },
+  erroTexto: {
+    color: "red",
+    fontSize: 12,
+    marginTop: 5,
   },
 };
